@@ -1,5 +1,5 @@
 """
-Setup configuration for the Feed package
+Setup configuration for the Feed package - Twitter Data Structure Library
 """
 
 from setuptools import setup, find_packages
@@ -10,22 +10,22 @@ this_directory = Path(__file__).parent
 long_description = (this_directory / "README.md").read_text(encoding='utf-8')
 
 setup(
-    name="twitter-feed-simulator",
+    name="twitter-feed-structure",
     version="1.0.0",
     author="Feed Module",
     author_email="",
-    description="A comprehensive Twitter simulation and data modeling package",
+    description="A clean Python package for Twitter/X data structures - build your simulator on top!",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/yourusername/feed",
-    packages=find_packages(exclude=["tests", "examples", "docs"]),
+    packages=find_packages(exclude=["tests", "docs"]),
     classifiers=[
-        "Development Status :: 4 - Beta",
+        "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Developers",
         "Intended Audience :: Science/Research",
         "Topic :: Software Development :: Libraries :: Python Modules",
         "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
-        "Topic :: Scientific/Engineering :: Information Analysis",
+        "Topic :: Software Development :: Libraries",
         "License :: OSI Approved :: MIT License",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.8",
@@ -33,8 +33,9 @@ setup(
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
+        "Typing :: Typed",
     ],
-    keywords="twitter, simulation, social-media, data-modeling, api",
+    keywords="twitter, data-structure, social-media, twitter-api, dataclass",
     python_requires=">=3.8",
     install_requires=[
         # No external dependencies - uses only Python standard library
@@ -45,11 +46,6 @@ setup(
             "black>=22.0.0",
             "flake8>=4.0.0",
             "mypy>=0.950",
-        ],
-    },
-    entry_points={
-        "console_scripts": [
-            "feed-simulate=examples.simulation_demo:main",
         ],
     },
     include_package_data=True,
