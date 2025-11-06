@@ -1,0 +1,53 @@
+{
+  "id": "1762404986934408901",
+  "text": "What's your favorite programming language for backend development? Vote below! 👇 #Programming #Tech #Poll",
+  "feed_type": "post",
+  "created_at": "2025-11-05T23:56:26.934735Z",
+  "author_id": "123456",
+  "conversation_id": "1762404986934408901",
+  "referenced_feeds": [],
+  "entities": {
+    "hashtags": [
+      {
+        "start": 81,
+        "end": 93,
+        "tag": "Programming"
+      },
+      {
+        "start": 94,
+        "end": 99,
+        "tag": "Tech"
+      },
+      {
+        "start": 100,
+        "end": 105,
+        "tag": "Poll"
+      }
+    ],
+    "mentions": [],
+    "urls": []
+  },
+  "attachments": {
+    "media_keys": [],
+    "poll_ids": [
+      "poll_1762404986934006426"
+    ]
+  },
+  "public_metrics": {
+    "repost_count": 45,
+    "reply_count": 32,
+    "like_count": 156,
+    "quote_count": 0,
+    "bookmark_count": 0,
+    "impressions": null,
+    "view_count": null,
+    "share_count": null
+  },
+  "possibly_sensitive": false,
+  "context_annotations": [],
+  "edit_history_feed_ids": [
+    "1762404986934408901"
+  ],
+  "platform": "twitter",
+  "platform_specific_data": {}
+}
