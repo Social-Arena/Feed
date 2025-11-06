@@ -2,50 +2,35 @@
 
 ## Overview
 
-The Feed data structure is a comprehensive, platform-agnostic implementation that mirrors the Twitter/X v2 API data model while supporting features from various social media platforms including TikTok, Instagram, and more.
+Feed is a focused, Twitter/X-style data structure library implemented with Python dataclasses. It models tweets, entities, public metrics, references, and a simple manager for creating/saving/loading/searching feeds. No external dependencies are required (Python 3.8+).
 
 ## Installation
 
-No external dependencies are required. The implementation uses only Python standard library modules (Python 3.8+).
-
 ```bash
-# No installation needed, just run:
-python3 main.py
+# From source
+pip install -e .
 ```
 
 ## Quick Start
 
-### Running the Demo
-
-```bash
-python3 main.py
-```
-
-This will:
-- Generate 11 example feed items with various features
-- Save them as JSON files with the naming pattern: `feed-{timestamp}-{unique_id}.json`
-- Create a feed response file containing multiple feeds with expanded includes
-- Demonstrate loading and searching capabilities
-
 ### Basic Usage
 
 ```python
-from feed_models import Feed, FeedType
-from feed_utils import FeedManager
+import feed
 
 # Initialize the manager
-manager = FeedManager(storage_dir="./feeds")
+manager = feed.FeedManager(storage_dir="./feeds")
 
 # Create a simple feed
-feed = manager.create_feed(
+tweet = manager.create_feed(
     text="Hello, world! #FirstPost",
     author_id="123456",
-    feed_type=FeedType.POST,
+    feed_type=feed.FeedType.POST,
     platform="twitter"
 )
 
 # Save the feed
-filepath = manager.save_feed(feed)
+filepath = manager.save_feed(tweet)
 print(f"Saved to: {filepath}")
 ```
 
@@ -61,11 +46,10 @@ Example: `feed-20251105_235626-1762404986933206598.json`
 ## Feed Types Supported
 
 - **POST**: Standard text post (Tweet-like)
-- **VIDEO**: Video content (TikTok-like)
-- **IMAGE_POST**: Image-focused post (Instagram-like)
-- **STORY**: Ephemeral content
-- **REEL**: Short video (Instagram Reels)
-- **THREAD**: Connected series of posts
+- **REPLY**: Reply to another tweet
+- **QUOTE**: Quote tweet
+- **RETWEET**: Retweet
+- **THREAD**: Thread continuation
 
 ## Key Features
 
@@ -84,10 +68,7 @@ Example: `feed-20251105_235626-1762404986933206598.json`
 - **Threads**: Connected series of posts
 
 ### Rich Content
-- **Entities**: Hashtags, mentions, URLs automatically extracted
-- **Media**: Photos, videos, GIFs with metadata
-- **Polls**: Multi-option polls with voting data
-- **Location**: Geographic information and place data
+- **Entities**: Hashtags, mentions, URLs (regex-based extraction utility)
 
 ### Metrics
 - Engagement counts (likes, reposts, replies, quotes)
@@ -95,9 +76,7 @@ Example: `feed-20251105_235626-1762404986933206598.json`
 - Impressions and bookmarks
 
 ### Platform-Specific Features
-- TikTok: Music ID, effects, duet/stitch settings
-- Instagram: Story features, reel metadata
-- Twitter: Edit history, reply settings
+- This package focuses on Twitter-style fields. Other platforms are not modeled.
 
 ## Working with Feeds
 
@@ -105,20 +84,20 @@ Example: `feed-20251105_235626-1762404986933206598.json`
 
 ```python
 # Create with entities extracted
-feed = manager.create_feed(
+tweet = manager.create_feed(
     text="Check out @username's post! #Amazing https://example.com",
     author_id="123456",
-    feed_type=FeedType.POST,
+    feed_type=feed.FeedType.POST,
     platform="twitter"
 )
-feed.entities = extract_entities(feed.text)
+tweet.entities = feed.extract_entities(tweet.text)
 ```
 
 ### Loading Feeds
 
 ```python
 # Load single feed
-feed = manager.load_feed("feeds/feed-20251105_235626-123456.json")
+tweet = manager.load_feed("feeds/feed-20251105_235626-123456.json")
 
 # Load all feeds
 all_feeds = manager.load_all_feeds()
@@ -130,26 +109,40 @@ all_feeds = manager.load_all_feeds()
 # Search by text content
 results = manager.search_feeds(text_contains="challenge")
 
-# Filter by platform
-twitter_feeds = manager.search_feeds(platform="twitter")
+# Filter by author
+users_feeds = manager.search_feeds(author_id="123456")
 
 # Filter by type
-video_feeds = manager.search_feeds(feed_type=FeedType.VIDEO)
+post_feeds = manager.search_feeds(feed_type=feed.FeedType.POST)
 ```
 
 ### Creating Threads
 
 ```python
-thread = create_thread(
-    texts=[
-        "1/ Starting a thread about Feed structures",
-        "2/3 The structure is platform-agnostic",
-        "3/3 Supporting multiple social platforms!"
-    ],
-    author_id="123456",
-    manager=manager,
-    platform="twitter"
-)
+def create_thread(texts, author_id, manager):
+    thread = []
+    conversation_id = None
+    for i, text in enumerate(texts):
+        if i == 0:
+            tw = manager.create_feed(text=text, author_id=author_id)
+            conversation_id = tw.id
+        else:
+            tw = manager.create_feed(
+                text=text,
+                author_id=author_id,
+                feed_type=feed.FeedType.THREAD,
+                conversation_id=conversation_id,
+                in_reply_to_user_id=author_id,
+                referenced_feeds=[
+                    feed.ReferencedFeed(
+                        type=feed.ReferencedFeedType.REPLIED_TO.value,
+                        id=thread[-1].id
+                    )
+                ]
+            )
+        tw.entities = feed.extract_entities(text)
+        thread.append(tw)
+    return thread
 ```
 
 ## JSON Structure
@@ -169,82 +162,46 @@ thread = create_thread(
   },
   "public_metrics": {
     "like_count": 15,
-    "repost_count": 5,
+    "retweet_count": 5,
     ...
   }
 }
 ```
 
-### Feed Response (API-style)
+### Multiple Feeds
 ```json
-{
-  "data": [...],  // Array of feeds
-  "includes": {
-    "users": [...],
-    "media": [...],
-    "places": [...],
-    "polls": [...]
-  },
-  "meta": {
-    "result_count": 5,
-    "next_token": "..."
-  }
-}
-```
-
-## Advanced Features
-
-### Edit History
-Tracks post edits with `edit_history_feed_ids` and `edit_controls`
-
-### Context Annotations
-Semantic categorization for better understanding:
-```python
-feed.context_annotations = [
-    ContextAnnotation(
-        domain={"id": "46", "name": "Technology"},
-        entity={"id": "1", "name": "Machine Learning"}
-    )
+[
+  { "id": "...", "text": "...", "feed_type": "post", ... },
+  { "id": "...", "text": "...", "feed_type": "reply", ... }
 ]
 ```
 
-### Content Moderation
-- `possibly_sensitive`: Flag for sensitive content
-- `withheld`: Content restriction information
-- `reply_settings`: Control who can reply
+## Notes
+- `possibly_sensitive` flag is available.
+- Public metrics fields include: `retweet_count`, `reply_count`, `like_count`, `quote_count`, `bookmark_count`, and optional `impression_count`.
 
 ## Files in This Project
 
-- `feed_models.py`: Core data models and structures
-- `feed_utils.py`: Utility functions and FeedManager class  
-- `main.py`: Demo script with examples
+- `feed/`: Package with models and utilities
 - `requirements.txt`: Dependencies (none required)
 - `feeds/`: Directory containing generated JSON files
 
 ## API Compatibility
 
-The structure is designed to be compatible with Twitter/X API v2, making it easy to:
-- Import real Twitter data
-- Export to Twitter-compatible format
-- Integrate with existing Twitter tools
+The structure follows Twitter/X API v2 field names for core tweet-like data, making it easy to:
+- Import real Twitter-like data
+- Export to a compatible JSON format
 
 ## Extending the Structure
 
-Add platform-specific features using the `platform_specific_data` field:
-
-```python
-feed.platform_specific_data = {
-    "instagram_specific_field": "value",
-    "custom_metadata": {...}
-}
-```
+Keep platform-specific extensions in downstream projects to preserve this package’s focused scope.
 
 ## Best Practices
 
 1. Always extract entities after setting feed text
 2. Use appropriate feed types for content
 3. Set platform identifier for proper context
-4. Include metrics for realistic data
+4. Include metrics as needed
 5. Use conversation_id for threading
 6. Save feeds immediately after creation
 

@@ -3,6 +3,7 @@ Entity extraction utilities for hashtags, mentions, and URLs
 """
 
 import re
+import hashlib
 from typing import Optional
 
 from ..models import Entities, HashtagEntity, MentionEntity, UrlEntity
@@ -36,7 +37,7 @@ def extract_entities(text: str) -> Optional[Entities]:
             start=match.start(),
             end=match.end(),
             username=match.group(1),
-            id=str(abs(hash(match.group(1))))  # Generate consistent ID from username
+            id=hashlib.sha256(match.group(1).encode("utf-8")).hexdigest()[:16]
         ))
     
     # Extract URLs
@@ -46,9 +47,13 @@ def extract_entities(text: str) -> Optional[Entities]:
         entities.urls.append(UrlEntity(
             start=match.start(),
             end=match.end(),
-            url=url[:30] + "..." if len(url) > 30 else url,  # Shortened URL
+            url=url,
             expanded_url=url,
-            display_url=url.replace("https://", "").replace("http://", "")[:30]
+            display_url=(
+                (url.replace("https://", "").replace("http://", ""))
+                if len(url.replace("https://", "").replace("http://", "")) <= 30
+                else (url.replace("https://", "").replace("http://", ""))[:27] + "..."
+            )
         ))
     
     return entities if (entities.hashtags or entities.mentions or entities.urls) else None
