@@ -1,0 +1,166 @@
+graph TB
+    subgraph External["🌐 External Integrations"]
+        Arena["Arena System<br/>(Social Simulation)"]
+        Agent["Agent System<br/>(AI Agents)"]
+        ExternalApp["External Applications"]
+    end
+
+    subgraph API["🔌 API Layer"]
+        direction TB
+        SimAPI["FeedSimulationAPI<br/>────────────<br/>• create_viral_feed()<br/>• create_sponsored_campaign()<br/>• inject_trend_shock()<br/>• simulate_content_lifecycle()<br/>• get_viral_content()<br/>• apply_governance_filters()<br/>• analyze_viral_patterns()<br/>• track_user_influence()"]
+        GovConfig["GovernanceFilterConfig"]
+    end
+
+    subgraph Extensions["📦 Feed Extensions"]
+        direction LR
+        ViralFeed["ViralFeed<br/>────────────<br/>+ viral_coefficient<br/>+ spread_velocity<br/>+ cascade_depth<br/>+ viral_triggers<br/>+ propagation_path<br/>────────────<br/>• calculate_virality_score()<br/>• is_viral()<br/>• update_virality_phase()"]
+        
+        SponsoredFeed["SponsoredFeed<br/>────────────<br/>+ sponsor_brand<br/>+ campaign_id<br/>+ budget_allocated<br/>+ actual_ctr<br/>────────────<br/>• update_performance()<br/>• get_roi_metrics()"]
+    end
+
+    subgraph Core["💎 Core Data Layer"]
+        direction TB
+        
+        subgraph Models["Models"]
+            Feed["Feed<br/>────────────<br/>+ id, text, author_id<br/>+ created_at<br/>+ feed_type<br/>+ conversation_id<br/>+ entities<br/>+ public_metrics<br/>────────────<br/>• to_dict()<br/>• from_dict()"]
+            
+            Entities["Entities<br/>────────────<br/>+ hashtags[]<br/>+ mentions[]<br/>+ urls[]"]
+            
+            Metrics["PublicMetrics<br/>────────────<br/>+ like_count<br/>+ retweet_count<br/>+ reply_count<br/>+ quote_count<br/>+ impression_count"]
+            
+            User["User<br/>────────────<br/>+ id, username<br/>+ verified<br/>+ public_metrics"]
+        end
+        
+        subgraph Managers["Managers"]
+            FeedMgr["FeedManager<br/>────────────<br/>• create_feed()<br/>• save_feed()<br/>• load_feed()<br/>• search_feeds()"]
+            
+            SimMgr["SimulationFeedManager<br/>────────────<br/>• create_viral_feed()<br/>• create_sponsored_feed()<br/>• inject_trend_shock()<br/>• simulate_feed_engagement()"]
+        end
+        
+        subgraph Utils["Utilities"]
+            Generators["generators.py<br/>────────────<br/>• generate_feed_id()<br/>• create_sample_user()"]
+            
+            EntityExtract["entities.py<br/>────────────<br/>• extract_entities()"]
+        end
+    end
+
+    subgraph Simulation["🔬 Simulation Layer"]
+        direction TB
+        
+        ViralMetrics["ViralityCalculator<br/>────────────<br/>• calculate_viral_coefficient()<br/>• calculate_spread_velocity()<br/>• predict_viral_potential()<br/>• track_viral_cascade()<br/>────────────<br/>📊 ViralityMetrics<br/>📊 ViralContext<br/>📊 ViralPotential"]
+        
+        EngageSim["EngagementSimulator<br/>────────────<br/>• simulate_engagement_wave()<br/>• simulate_user_session()<br/>────────────<br/>⏰ TimeDynamics<br/>📈 EngagementWave<br/>👤 UserBehaviorModel"]
+        
+        TrendModel["TrendDecayModel<br/>────────────<br/>• model_trend_lifecycle()<br/>• apply_trend_shock()<br/>• get_trend_momentum()<br/>────────────<br/>📉 TrendLifecycle<br/>💥 TrendShock"]
+        
+        SessionMgr["SessionManager<br/>────────────<br/>• create_user_session()<br/>• simulate_consumption()<br/>• end_session()<br/>────────────<br/>🎯 SessionParams<br/>📋 SessionResult"]
+    end
+
+    subgraph Governance["🛡️ Governance Layer"]
+        direction TB
+        
+        Safety["SafetyFilter<br/>────────────<br/>• assess_content_safety()<br/>• filter_unsafe_content()<br/>────────────<br/>☣️ ToxicityDetector<br/>🚫 MisinformationDetector<br/>⚠️ HarmfulContentDetector"]
+        
+        Fairness["FairnessMonitor<br/>────────────<br/>• monitor_demographic_fairness()<br/>• detect_bias()<br/>────────────<br/>📊 FairnessReport"]
+        
+        Brand["BrandSafety<br/>────────────<br/>• assess_brand_safety()<br/>• create_safe_collection()<br/>────────────<br/>🏢 BrandContext"]
+    end
+
+    subgraph Analytics["📊 Analytics Layer"]
+        direction TB
+        
+        ViralAnalyzer["ViralityAnalyzer<br/>────────────<br/>• analyze_viral_patterns()<br/>• identify_virality_factors()<br/>────────────<br/>🔍 ViralContentPatterns<br/>⚡ ViralityFactors"]
+        
+        Influence["InfluenceTracker<br/>────────────<br/>• track_influence_evolution()<br/>• analyze_influence_network()<br/>• identify_key_amplifiers()<br/>────────────<br/>📈 InfluenceEvolution<br/>🌐 InfluenceNetwork"]
+    end
+
+    subgraph Infrastructure["🔧 Infrastructure"]
+        direction LR
+        
+        Storage[("📁 JSON Storage<br/>────────────<br/>./feeds/<br/>feed-YYYYMMDD_HHMMSS-{id}.json")]
+        
+        TraceLog["📝 TraceLogger<br/>────────────<br/>./trace/<br/>├── errors/<br/>├── warnings/<br/>├── info/<br/>├── debug/<br/>└── performance/"]
+    end
+
+    %% External to API connections
+    Arena -->|"REST/Async"| SimAPI
+    Agent -->|"REST/Async"| SimAPI
+    ExternalApp -->|"REST/Async"| SimAPI
+
+    %% API to Extensions
+    SimAPI -->|creates/manages| ViralFeed
+    SimAPI -->|creates/manages| SponsoredFeed
+
+    %% Extensions to Core
+    ViralFeed -->|extends| Feed
+    SponsoredFeed -->|extends| Feed
+
+    %% Core internal connections
+    Feed -->|contains| Entities
+    Feed -->|contains| Metrics
+    SimMgr -->|uses| FeedMgr
+    FeedMgr -->|creates| Feed
+
+    %% API to Simulation
+    SimAPI -->|orchestrates| SimMgr
+    SimMgr -->|uses| ViralMetrics
+    SimMgr -->|uses| EngageSim
+    SimMgr -->|uses| TrendModel
+    SimMgr -->|uses| SessionMgr
+
+    %% Simulation to Core
+    ViralMetrics -->|analyzes| Feed
+    EngageSim -->|simulates| Feed
+    TrendModel -->|models| Feed
+    SessionMgr -->|tracks| User
+
+    %% API to Governance
+    SimAPI -->|applies| Safety
+    SimAPI -->|applies| Fairness
+    SimAPI -->|applies| Brand
+
+    %% Governance to Core
+    Safety -->|filters| Feed
+    Fairness -->|monitors| Feed
+    Brand -->|validates| Feed
+
+    %% API to Analytics
+    SimAPI -->|analyzes| ViralAnalyzer
+    SimAPI -->|tracks| Influence
+
+    %% Analytics to Core
+    ViralAnalyzer -->|analyzes| Feed
+    Influence -->|tracks| User
+    Influence -->|analyzes| Feed
+
+    %% Core to Infrastructure
+    FeedMgr -->|saves/loads| Storage
+    SimMgr -->|persists| Storage
+
+    %% Everything to Logging
+    SimAPI -.->|logs| TraceLog
+    SimMgr -.->|logs| TraceLog
+    ViralMetrics -.->|logs| TraceLog
+    EngageSim -.->|logs| TraceLog
+    Safety -.->|logs| TraceLog
+    ViralAnalyzer -.->|logs| TraceLog
+
+    %% Styling
+    classDef external fill:#ffe1f0,stroke:#ff69b4,stroke-width:3px
+    classDef api fill:#e1f5ff,stroke:#4169e1,stroke-width:3px
+    classDef extension fill:#fff4e1,stroke:#ffa500,stroke-width:2px
+    classDef core fill:#fff4e1,stroke:#daa520,stroke-width:2px
+    classDef simulation fill:#ffe1f0,stroke:#ff69b4,stroke-width:2px
+    classDef governance fill:#e1ffe8,stroke:#32cd32,stroke-width:2px
+    classDef analytics fill:#f0e1ff,stroke:#9370db,stroke-width:2px
+    classDef infra fill:#f5f5f5,stroke:#696969,stroke-width:2px
+
+    class Arena,Agent,ExternalApp external
+    class SimAPI,GovConfig api
+    class ViralFeed,SponsoredFeed extension
+    class Feed,Entities,Metrics,User,FeedMgr,SimMgr,Generators,EntityExtract core
+    class ViralMetrics,EngageSim,TrendModel,SessionMgr simulation
+    class Safety,Fairness,Brand governance
+    class ViralAnalyzer,Influence analytics
+    class Storage,TraceLog infra
+
