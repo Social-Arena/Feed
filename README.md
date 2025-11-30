@@ -8,7 +8,7 @@ A clean Python package for Twitter/X data modeling built entirely on top of Pyda
 ## Installation
 
 ```bash
-git clone https://github.com/yourusername/feed.git
+git clone https://github.com/Social-Arena/Feed
 cd Feed
 pip install -e .
 ```
