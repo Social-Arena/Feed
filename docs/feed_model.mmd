@@ -1,0 +1,92 @@
+```mermaid
+classDiagram
+    class Feed {
+        +str id
+        +str text
+        +str author_id
+        +str created_at
+        +FeedType feed_type
+        +str conversation_id
+        +str in_reply_to_user_id
+        +List~ReferencedFeed~ referenced_feeds
+        +Entities entities
+        +PublicMetrics public_metrics
+    }
+
+    class FeedType {
+        <<enumeration>>
+        POST
+        REPLY
+        QUOTE
+        RETWEET
+        THREAD
+    }
+
+    class ReferencedFeedType {
+        <<enumeration>>
+        REPLIED_TO
+        QUOTED
+        RETWEETED
+    }
+
+    class ReferencedFeed {
+        +ReferencedFeedType type
+        +str id
+    }
+
+    class Entities {
+        +List~HashtagEntity~ hashtags
+        +List~MentionEntity~ mentions
+        +List~UrlEntity~ urls
+    }
+
+    class HashtagEntity {
+        +int start
+        +int end
+        +str tag
+    }
+
+    class MentionEntity {
+        +int start
+        +int end
+        +str username
+        +str id
+    }
+
+    class UrlEntity {
+        +int start
+        +int end
+        +str url
+        +str expanded_url
+        +str display_url
+    }
+
+    class PublicMetrics {
+        +int retweet_count
+        +int reply_count
+        +int like_count
+        +int quote_count
+        +int bookmark_count
+        +int impression_count
+    }
+
+    class User {
+        +str id
+        +str username
+        +str name
+        +bool verified
+        +str description
+        +Dict~str,int~ public_metrics
+    }
+
+    Feed --> FeedType
+    Feed --> Entities
+    Feed --> PublicMetrics
+    Feed --> ReferencedFeed
+    ReferencedFeed --> ReferencedFeedType
+    Entities --> HashtagEntity
+    Entities --> MentionEntity
+    Entities --> UrlEntity
+    Feed ..> User : separate user profile model
+```
+
