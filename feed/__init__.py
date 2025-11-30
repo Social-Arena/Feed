@@ -1,51 +1,15 @@
-"""
-Feed - Twitter Data Structure Library
-
-A clean, focused Python package for Twitter/X data modeling.
-This is a pure data structure library - build your simulation on top of it!
-"""
+"""Feed - Twitter Data Structure Library"""
 
 __version__ = "1.0.0"
-__author__ = "Feed Module"
 
-# Import core models
 from .models import (
-    Feed,
-    FeedType,
-    Entities,
-    HashtagEntity,
-    MentionEntity,
-    UrlEntity,
-    PublicMetrics,
-    ReferencedFeed,
-    ReferencedFeedType,
-    User,
+    Feed, FeedType, Entities, HashtagEntity, MentionEntity, UrlEntity,
+    PublicMetrics, ReferencedFeed, ReferencedFeedType, User
 )
-
-# Import utilities
-from .utils import (
-    FeedManager,
-    extract_entities,
-    generate_feed_id,
-    create_sample_user,
-)
+from .utils import extract_entities, generate_feed_id, save_feed, load_feed
 
 __all__ = [
-    # Models
-    "Feed",
-    "FeedType",
-    "Entities",
-    "HashtagEntity",
-    "MentionEntity",
-    "UrlEntity",
-    "PublicMetrics",
-    "ReferencedFeed",
-    "ReferencedFeedType",
-    "User",
-    
-    # Utilities
-    "FeedManager",
-    "extract_entities",
-    "generate_feed_id",
-    "create_sample_user",
+    "Feed", "FeedType", "Entities", "HashtagEntity", "MentionEntity", "UrlEntity",
+    "PublicMetrics", "ReferencedFeed", "ReferencedFeedType", "User",
+    "extract_entities", "generate_feed_id", "save_feed", "load_feed"
 ]
