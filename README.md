@@ -1,10 +1,5 @@
 # Feed - Twitter Data Structure Library
 
-A clean Python package for Twitter/X data modeling built entirely on top of Pydantic for concise, validated data structures.
-
-[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-
 ## Installation
 
 ```bash
